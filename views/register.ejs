@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="../assets/css/register.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+     <img src="/assets/lock.png" id="lock-img" alt="icon" width="20%" />
+      <div class="card card-body text-center" id="card">
+        <h1 class="mb-3">
+        </h1>
+        <h2>
+          Register New User
+        </h2>
+        <%- include('./massages.ejs') %>
+        <form action="/auth/register" method="POST">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="name" id="name" name="name" class="form-control" placeholder="Enter Name"
+              value="<%= typeof name != 'undefined' ? name : '' %>" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email"
+              value="<%= typeof email != 'undefined' ? email : '' %>" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password"
+              value="<%= typeof password != 'undefined' ? password : '' %>" />
+          </div>
+          <div class="form-group">
+            <label for="password2">Confirm Password</label>
+            <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm Password"
+              value="<%= typeof password2 != 'undefined' ? password2 : '' %>" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">
+            Register
+          </button>
+
+        </form>
+        <div id="google-signin-button"><button>Google Sign in</button></div>
+
+        <p class="mt-4">Already have an account? <a href="/auth/login">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleGoogleSignIn(googleUser) {
+      // This function handles the sign-in response
+      var id_token = googleUser.getAuthResponse().id_token;
+      // You can use the id_token to authenticate the user on the server side
+  
+      // Example: Send the token to your server via AJAX
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/your-server-endpoint');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function () {
+        console.log('Signed in as: ' + xhr.responseText);
+      };
+      xhr.send('id_token=' + id_token);
+    }
+  
+    function startGoogleSignIn() {
+      // This function is triggered when the user clicks the sign-in button
+      gapi.load('auth2', function () {
+        gapi.auth2.init({
+          client_id: 'YOUR_CLIENT_ID',
+        }).then(function () {
+          gapi.signin2.render('google-signin-button', {
+            'scope': 'profile email',
+            'width': 240,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': handleGoogleSignIn,
+          });
+        });
+      });
+    }
+  
+    document.addEventListener('DOMContentLoaded', function () {
+      startGoogleSignIn();
+    });
+  </script>
+  
